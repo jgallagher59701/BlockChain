@@ -23,6 +23,10 @@ public class TxHandler {
 		currentUtxoPool = new UTXOPool(utxoPool); // And set the initial value of the current UTXO pool
 	}
 
+	public UTXOPool getUTXOPool() {
+		return currentUtxoPool;
+	}
+	
 	/**
 	 * @return true if: (1) all outputs claimed by {@code tx} are in the current
 	 *         UTXO pool, (2) the signatures on each input of {@code tx} are valid,
@@ -84,58 +88,6 @@ public class TxHandler {
 	}
 
 	/**
-	 * Handles each epoch by receiving an unordered array of proposed transactions,
-	 * checking each transaction for correctness, returning a mutually valid array
-	 * of accepted transactions, and updating the current UTXO pool as appropriate.
-	 * 
-	 * @note This gets a score of 83/95
-	 */
-	public Transaction[] handleTxs83_95(Transaction[] possibleTxs) {
-		// Find the valid transactions
-		ArrayList<Transaction> validTxs = new ArrayList<Transaction>();
-		for (Transaction tx : possibleTxs) {
-			if (isValidTx(tx))
-				validTxs.add(tx);
-		}
-
-		ArrayList<Transaction> invalidTxList = new ArrayList<Transaction>();
-		UTXOPool tmpPool = new UTXOPool(currentUtxoPool);
-
-		for (Transaction tx : validTxs) {
-			// Modify so a Transaction found to be invalid causes no change to the
-			// currentUtxoPool
-			for (int output = 0; output < tx.numOutputs(); ++output) {
-				tmpPool.addUTXO(new UTXO(tx.getHash(), output), tx.getOutput(output));
-			}
-		}
-
-		for (Transaction tx : validTxs) {
-			// Now remove the Outputs in the current pool that are 'spent' by an Input.
-			// If an Input spends an Output that doesn't exist, the transaction is invalid
-			boolean validTx = true; // Assume they are OK
-			for (int input = 0; input < tx.numInputs() && validTx; ++input) {
-				UTXO u = new UTXO(tx.getInput(input).prevTxHash, tx.getInput(input).outputIndex);
-				if (tmpPool.contains(u)) {
-					tmpPool.removeUTXO(u);
-				} else {
-					validTx = false;
-				}
-			}
-
-			if (!validTx)
-				invalidTxList.add(tx);
-		}
-
-		currentUtxoPool = tmpPool;
-
-		for (Transaction invalid : invalidTxList) {
-			validTxs.remove(invalid);
-		}
-
-		return validTxs.toArray(new Transaction[validTxs.size()]);
-	}
-
-	/**
 	 * This version works correctly, passing all of the tests.
 	 * 
 	 * This version assumes all transactions are (possibly) invalid and works on
@@ -150,7 +102,7 @@ public class TxHandler {
 	 * 
 	 * The trick with this version is to find a valid Tx and then extend the current
 	 * UTXO pool so that Tx validity is tested between Inputs and Outputs across Txs
-	 * and not just within a singel Tx. That's what the first (more efficient)
+	 * and not just within a single Tx. That's what the first (more efficient)
 	 * version did.
 	 * 
 	 * @param possibleTxs

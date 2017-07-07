@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+//import TxHandler;
 
 // Block Chain should maintain only limited block nodes to satisfy the functions
 // You should not have all the blocks added to the block chain in memory 
@@ -10,6 +11,8 @@ public class BlockChain {
     private TransactionPool txPool;
     private ArrayList<Block> theBlocks;
     
+    private TxHandler txHandler;
+    
     /**
      * create an empty block chain with just a genesis block. Assume {@code genesisBlock} is a valid
      * block
@@ -19,6 +22,11 @@ public class BlockChain {
     		txPool = new TransactionPool();
     		// Start out using a list
     		theBlocks = new ArrayList<Block>();
+    		
+    		theBlocks.add(genesisBlock);
+    		
+    		UTXOPool utxoPool = new UTXOPool();
+    		txHandler = new TxHandler(utxoPool);
     }
 
     /** Get the maximum height block */
@@ -30,8 +38,11 @@ public class BlockChain {
     /** Get the UTXOPool for mining a new block on top of max height block */
     public UTXOPool getMaxHeightUTXOPool() {
         // IMPLEMENT THIS
+    		/*
     		UTXOPool utxoPool = new UTXOPool();
     		return utxoPool;
+    		*/
+    		return txHandler.getUTXOPool();
     }
 
     /** Get the transaction pool to mine a new block */
@@ -59,6 +70,7 @@ public class BlockChain {
     			return false;
     		
     		// Check if block is valid - checking that the txs form a valid set is enough
+    		theBlocks.add(block);
     		
     		return true;		// FIXME
     }
@@ -66,5 +78,7 @@ public class BlockChain {
     /** Add a transaction to the transaction pool */
     public void addTransaction(Transaction tx) {
         // IMPLEMENT THIS
+    		if (txHandler.isValidTx(tx))
+    			txPool.addTransaction(tx);
     }
 }
