@@ -1,5 +1,5 @@
+
 import java.util.ArrayList;
-//import TxHandler;
 
 // Block Chain should maintain only limited block nodes to satisfy the functions
 // You should not have all the blocks added to the block chain in memory 
@@ -70,6 +70,7 @@ public class BlockChain {
     			return false;
     		
     		// Check if block is valid - checking that the txs form a valid set is enough
+    		//block.getTransactions()
     		theBlocks.add(block);
     		
     		return true;		// FIXME
