@@ -69,11 +69,30 @@ public class BlockChain {
     		if (block.getHash() == null)
     			return false;
     		
-    		// Check if block is valid - checking that the txs form a valid set is enough
-    		//block.getTransactions()
-    		theBlocks.add(block);
+    		if (block.getPrevBlockHash() == null)
+    			return false;
     		
-    		return true;		// FIXME
+    		/*
+    		if (!(block.getTransactions().size() > getMaxHeightBlock().getTransactions().size() - CUT_OFF_AGE))
+    			return false;
+    		*/
+    		
+    		// Check if block is valid - checking that the txs form a valid set is enough
+    		/*
+    		ArrayList<Transaction> blockTxs = block.getTransactions();
+    		Transaction[] validTxs = txHandler.handleTxs(blockTxs.toArray(new Transaction[blockTxs.size()]));
+    		if (validTxs.length != blockTxs.size())
+    			return false;
+    		*/  
+    		/*
+    		for (Transaction tx: block.getTransactions()) {
+    			if (!txHandler.isValidTx(tx))
+    				return false;
+    		}
+    		*/
+    		theBlocks.add(block);	// FIXME
+    		
+    		return true;	
     }
 
     /** Add a transaction to the transaction pool */
