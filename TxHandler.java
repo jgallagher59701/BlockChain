@@ -149,7 +149,6 @@ public class TxHandler {
 					if (validTx) {
 						currentUtxoPool = tmpPool;
 						validTxs.add(tx);
-						// invalidTxs.remove(tx);
 					}
 				}
 			}
